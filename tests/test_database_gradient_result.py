@@ -8,13 +8,11 @@ from .database_utils import (
     _CONTROLS,
     _EXPERIMENT_NAME,
     _FUNCTIONS,
-    database_test,
     load_info_to_db,
     tmpdir,
 )
 
 
-@database_test
 class TestDatabaseGradientResult(TestCase):
     @tmpdir(os.getcwd())
     def test_add_gradient_result(self):

@@ -10,13 +10,11 @@ from .database_utils import (
     _EXISTING_FUNCTION_NAME,
     _EXPERIMENT_NAME,
     _FUNCTIONS,
-    database_test,
     load_info_to_db,
     tmpdir,
 )
 
 
-@database_test
 class TestDatabaseFunction(TestCase):
     @tmpdir(os.getcwd())
     def test_add_function(self):

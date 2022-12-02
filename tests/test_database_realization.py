@@ -9,13 +9,11 @@ from .database_utils import (
     _EXPERIMENT_NAME,
     _REALIZATION_WEIGHTS,
     _REALIZATIONS,
-    database_test,
     load_info_to_db,
     tmpdir,
 )
 
 
-@database_test
 class TestDatabaseRealization(TestCase):
     @tmpdir(os.getcwd())
     def test_add_realization(self):

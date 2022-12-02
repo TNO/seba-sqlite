@@ -9,13 +9,11 @@ from seba_sqlite.exceptions import ObjectNotFoundError
 from .database_utils import (
     _EXPERIMENT_NAME,
     _NUMBER_OF_BATCHES,
-    database_test,
     load_info_to_db,
     tmpdir,
 )
 
 
-@database_test
 class TestDatabaseBatch(TestCase):
     @tmpdir(os.getcwd())
     def test_add_batch(self):

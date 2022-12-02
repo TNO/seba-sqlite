@@ -13,7 +13,6 @@ from .database_utils import (
     _NUMBER_OF_BATCHES,
     _REALIZATION_WEIGHTS,
     _REALIZATIONS,
-    database_test,
     load_info_to_db,
     tmp,
 )
@@ -36,7 +35,6 @@ def _get_database():
     return database
 
 
-@database_test
 class TestDatabaseCalculationResult(TestCase):
     def test_add_calculation_result(self):
         with tmp():

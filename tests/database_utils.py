@@ -10,9 +10,6 @@ import pytest
 
 from seba_sqlite import Database
 
-# Used to mark a test as a database test
-database_test = pytest.mark.database_test
-
 
 def relpath(*path):
     return os.path.join(os.path.dirname(__file__), *path)

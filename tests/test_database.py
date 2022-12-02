@@ -16,7 +16,6 @@ from .database_utils import (
     _NUMBER_OF_SIMULATIONS,
     _REALIZATION_WEIGHTS,
     _REALIZATIONS,
-    database_test,
     load_info_to_db,
     relpath,
     tmpdir,
@@ -65,7 +64,6 @@ def _add_sim_result(database):
                 database.set_simulation_ended(sim_name, True)
 
 
-@database_test
 class TestDatabase(TestCase):
     @tmpdir(relpath("test_data"))
     def test__full_circle(self):

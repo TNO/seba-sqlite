@@ -8,13 +8,11 @@ from seba_sqlite.exceptions import ObjectNotFoundError
 from .database_utils import (
     _CONTROLS,
     _EXPERIMENT_NAME,
-    database_test,
     load_info_to_db,
     tmpdir,
 )
 
 
-@database_test
 class TestDatabaseControlDefinition(TestCase):
     @tmpdir(os.getcwd())
     def test_add_control_definition(self):

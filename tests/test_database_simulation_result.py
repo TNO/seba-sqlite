@@ -14,7 +14,6 @@ from .database_utils import (
     _NUMBER_OF_BATCHES,
     _REALIZATION_WEIGHTS,
     _REALIZATIONS,
-    database_test,
     load_info_to_db,
     tmpdir,
 )
@@ -30,7 +29,6 @@ def _custom_update(database):
     database.add_simulation_result(**value)
 
 
-@database_test
 class TestDatabaseSimulationResult(TestCase):
     @tmpdir(os.getcwd())
     def test_add_result_with_non_existing_function_non_existing_simulation(self):

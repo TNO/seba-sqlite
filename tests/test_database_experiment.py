@@ -6,10 +6,9 @@ from seba_sqlite import Database
 from seba_sqlite.exceptions import ObjectNotFoundError
 
 # pylint: disable=import-error,wrong-import-order
-from .database_utils import _EXPERIMENT_NAME, database_test, tmpdir
+from .database_utils import _EXPERIMENT_NAME, tmpdir
 
 
-@database_test
 class TestDatabaseExperiment(TestCase):
     @tmpdir(os.getcwd())
     def test_create_experiment(self):

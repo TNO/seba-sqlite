@@ -13,13 +13,11 @@ from .database_utils import (
     _FUNCTIONS,
     _REALIZATION_WEIGHTS,
     _REALIZATIONS,
-    database_test,
     load_info_to_db,
     tmpdir,
 )
 
 
-@database_test
 class TestDatabaseSimulation(TestCase):
     @tmpdir(os.getcwd())
     def test_add_multiple_simulation(self):
