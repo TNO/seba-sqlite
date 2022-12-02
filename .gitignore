@@ -1,0 +1,4 @@
+**/__pycache__/**
+src/**egg-info/**
+src/**/seba_sqlite/version.py
+.vscode/**
