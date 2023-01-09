@@ -67,7 +67,7 @@ class SqliteStorage:
         for name, weight, scale in zip(
             self._workflow.config.objective_functions.names,
             self._workflow.config.objective_functions.weights,
-            self._workflow.config.objective_functions.scales,
+            self._workflow.objective_scales,
         ):
             self._database.add_function(
                 name=name,
@@ -78,7 +78,7 @@ class SqliteStorage:
         if self._workflow.config.nonlinear_constraints is not None:
             for name, scale, rhs_value, constraint_type in zip(
                 self._workflow.config.nonlinear_constraints.names,
-                self._workflow.config.nonlinear_constraints.scales,
+                self._workflow.constraint_scales,
                 self._workflow.config.nonlinear_constraints.rhs_values,
                 self._workflow.config.nonlinear_constraints.types,
             ):
