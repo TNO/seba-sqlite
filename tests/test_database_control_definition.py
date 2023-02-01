@@ -75,6 +75,6 @@ class TestDatabaseControlDefinition(TestCase):
             **{
                 "Experiment": [_EXPERIMENT_NAME],
                 "control_definition": _CONTROLS,
-            }
+            },
         )
         self.assertEqual(len(database.load_control_definitions()), len(_CONTROLS))

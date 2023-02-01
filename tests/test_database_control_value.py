@@ -25,7 +25,7 @@ class TestDatabaseControlValue(TestCase):
             **{
                 "Experiment": [_EXPERIMENT_NAME],
                 "control_definition": _CONTROLS,
-            }
+            },
         )
 
         control_value = database.load_control_values(set_id=set_id)
@@ -44,7 +44,7 @@ class TestDatabaseControlValue(TestCase):
                 "control_definition": _CONTROLS,
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Batch": [0],
-            }
+            },
         )
         database.add_control_value(0, _CONTROLS[0], 15)
 
@@ -69,7 +69,7 @@ class TestDatabaseControlValue(TestCase):
             **{
                 "Experiment": [_EXPERIMENT_NAME],
                 "control_definition": _CONTROLS,
-            }
+            },
         )
         control_value = database.load_control_values(set_id=0)
         self.assertFalse(bool(control_value))
@@ -82,7 +82,7 @@ class TestDatabaseControlValue(TestCase):
             **{
                 "Experiment": [_EXPERIMENT_NAME],
                 "control_definition": _CONTROLS,
-            }
+            },
         )
         for set_id, control_name in zip(range(10), _CONTROLS[:10]):
             database.add_control_value(set_id, control_name, random.randint(1, 100))

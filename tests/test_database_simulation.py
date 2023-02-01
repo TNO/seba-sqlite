@@ -30,7 +30,7 @@ class TestDatabaseSimulation(TestCase):
                 "Batch": [0],
                 "control_definition": _CONTROLS,
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
-            }
+            },
         )
         sim_names = ["Simulation_{}".format(i) for i in range(5)]
         for name in sim_names:
@@ -65,7 +65,7 @@ class TestDatabaseSimulation(TestCase):
                 "Batch": [0],
                 "control_definition": _CONTROLS,
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
-            }
+            },
         )
         with self.assertRaises(ObjectNotFoundError):
             database.load_simulation(name="Inexisting Simulation")
@@ -83,7 +83,7 @@ class TestDatabaseSimulation(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         simulation = database.load_simulation(name=_EXISTING_SIMULATION_NAME)
         self.assertIsNotNone(simulation)
@@ -104,7 +104,7 @@ class TestDatabaseSimulation(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         simulation = database.load_simulation(name=_EXISTING_SIMULATION_NAME)
         self.assertIsNone(simulation.end_time_stamp)
@@ -137,7 +137,7 @@ class TestDatabaseSimulation(TestCase):
                     ["simulation_{}".format(i) for i in range(1, 11)],
                 ),
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         simulations = database.load_simulations()
         self.assertEqual(len(simulations), 10)

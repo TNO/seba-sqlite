@@ -83,7 +83,7 @@ class TestDatabaseFunction(TestCase):
             **{
                 "Experiment": [_EXPERIMENT_NAME],
                 "Function": [_EXISTING_FUNCTION_NAME],
-            }
+            },
         )
         function = database.load_function(_EXISTING_FUNCTION_NAME)
         self.assertIsNotNone(function)

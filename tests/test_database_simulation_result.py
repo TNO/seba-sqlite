@@ -43,7 +43,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         function_name = "NonExistingFunction"
         simulation_name = "NonExistingSimulation"
@@ -71,7 +71,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         function_name = "NonExistingFunction"
         simulation_result = database.load_simulation_results(
@@ -102,7 +102,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         simulation_name = "NonExistingSimulation"
         value = {
@@ -127,7 +127,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         simulation_result = database.load_simulation_results(
             name=_EXISTING_SIMULATION_NAME
@@ -158,7 +158,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         _custom_update(database)
         existing_result = database.load_simulation_results(
@@ -181,7 +181,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
         non_existing = database.load_simulation_results(name=_EXISTING_SIMULATION_NAME)
         self.assertFalse(bool(non_existing))
@@ -202,7 +202,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": simulations_values,
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
 
         # Add Simulation Results
@@ -244,7 +244,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": simulations_values,
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
 
         # Add Simulation Results
@@ -286,7 +286,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": simulations_values,
                 "dict_order": ["Batch", "control_definition", "Simulation"],
-            }
+            },
         )
 
         for fun in _FUNCTIONS:
@@ -342,7 +342,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": simulations_values,
                 "dict_order": ["Batch", "control_definition", "Simulation"],
-            }
+            },
         )
 
         for fun in _FUNCTIONS:
@@ -398,7 +398,7 @@ class TestDatabaseSimulationResult(TestCase):
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
                 "Simulation": simulations_values,
                 "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-            }
+            },
         )
 
         simulations = database.load_simulations()

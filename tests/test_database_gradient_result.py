@@ -24,7 +24,7 @@ class TestDatabaseGradientResult(TestCase):
                 "Function": _FUNCTIONS,
                 "Batch": range(10),
                 "control_definition": _CONTROLS,
-            }
+            },
         )
         gradient_results = database.load_gradient_results()
         self.assertEqual(len(gradient_results), 0)
@@ -49,7 +49,7 @@ class TestDatabaseGradientResult(TestCase):
                 "Function": _FUNCTIONS,
                 "Batch": range(10),
                 "control_definition": _CONTROLS,
-            }
+            },
         )
         for func, crt in zip(_FUNCTIONS, _CONTROLS[:3]):
             database.add_gradient_result(
@@ -73,7 +73,7 @@ class TestDatabaseGradientResult(TestCase):
                 "Function": _FUNCTIONS,
                 "Batch": range(10),
                 "control_definition": _CONTROLS,
-            }
+            },
         )
         for func, crt in zip(_FUNCTIONS, _CONTROLS[:3]):
             database.add_gradient_result(

@@ -78,6 +78,6 @@ class TestDatabaseRealization(TestCase):
             **{
                 "Experiment": [_EXPERIMENT_NAME],
                 "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
-            }
+            },
         )
         self.assertEqual(len(database.load_realizations()), len(_REALIZATIONS))

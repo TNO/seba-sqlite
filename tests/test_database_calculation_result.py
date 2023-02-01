@@ -30,7 +30,7 @@ def _get_database():
             "Realization": zip(_REALIZATIONS, _REALIZATION_WEIGHTS),
             "Simulation": [[_REALIZATIONS[0], 0, _EXISTING_SIMULATION_NAME]],
             "dict_order": ["Function", "Batch", "control_definition", "Simulation"],
-        }
+        },
     )
     return database
 
