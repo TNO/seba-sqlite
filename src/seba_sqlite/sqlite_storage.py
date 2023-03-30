@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy
 
-from seba.enums import ConstraintType, OptimizationEvent
+from seba.enums import ConstraintType, OptimizationEventType
 
 from .database import Database
 from .snapshot import SebaSnapshot
@@ -37,10 +37,7 @@ class SqliteStorage:
     # snapshot code, since it is meant for backwards compatibility, and should
     # not be extended with new functionality.
 
-    def __init__(self, workflow, output_dir):
-        # Optimization configuration.
-        self._workflow = workflow
-
+    def __init__(self, optimizer, output_dir):
         # Internal variables.
         self._output_dir = output_dir
         self._database = Database(output_dir)
@@ -49,30 +46,33 @@ class SqliteStorage:
         self._simulator_results = None
         self._merit_file = Path(output_dir) / "dakota" / "OPT_DEFAULT.out"
 
+        # Connect event handlers.
+        self._set_event_handlers(optimizer)
+
     @property
     def file(self):
         return self._database.location
 
-    def _initialize(self):
+    def _initialize(self, event):
         self._database.add_experiment(
             name="optimization_experiment", start_time_stamp=time.time()
         )
 
         # Add configuration values.
         for control_name, initial_value, lower_bound, upper_bound in zip(
-            _convert_names(self._workflow.config.variables.names),
-            self._workflow.config.variables.initial_values,
-            self._workflow.config.variables.lower_bounds,
-            self._workflow.config.variables.upper_bounds,
+            _convert_names(event.config.variables.names),
+            event.config.variables.initial_values,
+            event.config.variables.lower_bounds,
+            event.config.variables.upper_bounds,
         ):
             self._database.add_control_definition(
                 control_name, initial_value, lower_bound, upper_bound
             )
 
         for name, weight, scale in zip(
-            self._workflow.config.objective_functions.names,
-            self._workflow.config.objective_functions.weights,
-            self._workflow.config.objective_functions.scales,
+            event.config.objective_functions.names,
+            event.config.objective_functions.weights,
+            event.config.objective_functions.scales,
         ):
             self._database.add_function(
                 name=name,
@@ -81,12 +81,12 @@ class SqliteStorage:
                 normalization=1.0 / scale,
             )
 
-        if self._workflow.config.nonlinear_constraints is not None:
+        if event.config.nonlinear_constraints is not None:
             for name, scale, rhs_value, constraint_type in zip(
-                self._workflow.config.nonlinear_constraints.names,
-                self._workflow.config.nonlinear_constraints.scales,
-                self._workflow.config.nonlinear_constraints.rhs_values,
-                self._workflow.config.nonlinear_constraints.types,
+                event.config.nonlinear_constraints.names,
+                event.config.nonlinear_constraints.scales,
+                event.config.nonlinear_constraints.rhs_values,
+                event.config.nonlinear_constraints.types,
             ):
                 self._database.add_function(
                     name=name,
@@ -97,16 +97,16 @@ class SqliteStorage:
                 )
 
         for name, weight in zip(
-            self._workflow.config.realizations.names,
-            self._workflow.config.realizations.weights,
+            event.config.realizations.names,
+            event.config.realizations.weights,
         ):
             self._database.add_realization(str(name), weight)
 
-    def _add_batch(self, controls, perturbed_controls):
+    def _add_batch(self, config, controls, perturbed_controls):
         self._database.add_batch()
         self._gradient_ensemble_id += 1
         self._control_ensemble_id = self._gradient_ensemble_id
-        control_names = _convert_names(self._workflow.config.variables.names)
+        control_names = _convert_names(config.variables.names)
         for control_name, value in zip(control_names, controls):
             self._database.add_control_value(
                 set_id=self._control_ensemble_id,
@@ -127,37 +127,39 @@ class SqliteStorage:
                         value=perturbed_controls[c_idx, g_idx],
                     )
 
-    def _add_simulations(self, batch, last_result):
+    def _add_simulations(self, config, result):
         self._gradient_ensemble_id = self._control_ensemble_id
         simulation_index = count()
-        if last_result.functions is not None:
-            for realization_name in self._workflow.config.realizations.names:
+        if result.functions is not None:
+            for realization_name in config.realizations.names:
                 self._database.add_simulation(
                     realization_name=str(realization_name),
                     set_id=self._control_ensemble_id,
-                    sim_name=f"{batch}_{next(simulation_index)}",
+                    sim_name=f"{result.batch}_{next(simulation_index)}",
                     is_gradient=False,
                 )
-        if last_result.gradients is not None:
-            for realization_name in self._workflow.config.realizations.names:
-                for _ in range(self._workflow.config.gradient.perturbation_number):
+        if result.gradients is not None:
+            for realization_name in config.realizations.names:
+                for _ in range(config.gradient.number_of_perturbations):
                     self._gradient_ensemble_id += 1
                     self._database.add_simulation(
                         realization_name=str(realization_name),
                         set_id=self._gradient_ensemble_id,
-                        sim_name=f"{batch}_{next(simulation_index)}",
+                        sim_name=f"{result.batch}_{next(simulation_index)}",
                         is_gradient=True,
                     )
 
-    def _add_simulator_results(self, batch, objective_results, constraint_results):
+    def _add_simulator_results(
+        self, config, batch, objective_results, constraint_results
+    ):
         if constraint_results is None:
             results = objective_results
         else:
             results = numpy.vstack((objective_results, constraint_results))
         statuses = numpy.logical_and.reduce(numpy.isfinite(results), axis=0)
-        names = self._workflow.config.objective_functions.names
-        if self._workflow.config.nonlinear_constraints is not None:
-            names += self._workflow.config.nonlinear_constraints.names
+        names = config.objective_functions.names
+        if config.nonlinear_constraints is not None:
+            names += config.nonlinear_constraints.names
 
         for sim_idx, status in enumerate(statuses):
             sim_name = f"{batch}_{sim_idx}"
@@ -169,12 +171,12 @@ class SqliteStorage:
             self._database.set_simulation_ended(sim_name, status)
         self._database.set_batch_ended(time.time(), True)
 
-    def _add_constraint_values(self, batch, constraint_values):
+    def _add_constraint_values(self, config, batch, constraint_values):
         statuses = numpy.logical_and.reduce(numpy.isfinite(constraint_values), axis=0)
         for sim_id, status in enumerate(statuses):
             if status:
                 for idx, constraint_name in enumerate(
-                    self._workflow.config.nonlinear_constraints.names
+                    config.nonlinear_constraints.names
                 ):
                     # Note the time_index=0, the database supports storing
                     # multipel time-points, but we do not support that, so we
@@ -187,14 +189,14 @@ class SqliteStorage:
                     )
 
     # pylint: disable=unused-argument
-    def _add_gradients(self, objective_gradients):
+    def _add_gradients(self, config, objective_gradients):
         for grad_index, gradient in enumerate(objective_gradients):
             for control_index, control_name in enumerate(
-                _convert_names(self._workflow.config.variables.names)
+                _convert_names(config.variables.names)
             ):
                 self._database.add_gradient_result(
                     gradient[control_index],
-                    self._workflow.config.objective_functions.names[grad_index],
+                    config.objective_functions.names[grad_index],
                     1,
                     control_name,
                 )
@@ -205,62 +207,70 @@ class SqliteStorage:
             object_function_value=total_objective,
         )
 
-    def _convert_constraints(self, constraint_results):
+    def _convert_constraints(self, config, constraint_results):
         constraint_results = copy.deepcopy(constraint_results)
-        rhs_values = self._workflow.config.nonlinear_constraints.rhs_values
-        for idx, constraint_type in enumerate(
-            self._workflow.config.nonlinear_constraints.types
-        ):
+        rhs_values = config.nonlinear_constraints.rhs_values
+        for idx, constraint_type in enumerate(config.nonlinear_constraints.types):
             constraint_results[idx] -= rhs_values[idx]
             if constraint_type == ConstraintType.LE:
                 constraint_results[idx] *= -1.0
         return constraint_results
 
-    def _handle_finished_batch_event(self, event, result):
+    def _handle_finished_batch_event(self, event):
         logger.debug("Storing batch results in the sqlite database")
 
         self._add_batch(
-            result.evaluations.variables, result.evaluations.perturbed_variables
+            event.config,
+            event.results.evaluations.variables,
+            event.results.evaluations.perturbed_variables,
         )
-        self._add_simulations(result.batch, result)
+        self._add_simulations(event.config, event.results)
 
         # Convert back the simulation results to the legacy format:
-        objective_results = result.evaluations.objectives
-        if result.evaluations.perturbed_objectives is not None:
-            perturbed_objectives = result.evaluations.perturbed_objectives.reshape(
-                result.evaluations.perturbed_objectives.shape[0], -1
+        objective_results = event.results.evaluations.objectives
+        if event.results.evaluations.perturbed_objectives is not None:
+            perturbed_objectives = (
+                event.results.evaluations.perturbed_objectives.reshape(
+                    event.results.evaluations.perturbed_objectives.shape[0], -1
+                )
             )
             if objective_results is None:
                 objective_results = perturbed_objectives
             else:
                 objective_results = numpy.hstack(
-                    (result.evaluations.objectives, perturbed_objectives),
+                    (event.results.evaluations.objectives, perturbed_objectives),
                 )
 
-        constraint_results = result.evaluations.constraints
-        if self._workflow.config.nonlinear_constraints is not None:
-            if result.evaluations.perturbed_constraints is not None:
+        constraint_results = event.results.evaluations.constraints
+        if event.config.nonlinear_constraints is not None:
+            if event.results.evaluations.perturbed_constraints is not None:
                 perturbed_constraints = (
-                    result.evaluations.perturbed_constraints.reshape(
-                        result.evaluations.perturbed_constraints.shape[0], -1
+                    event.results.evaluations.perturbed_constraints.reshape(
+                        event.results.evaluations.perturbed_constraints.shape[0], -1
                     )
                 )
                 if constraint_results is None:
                     constraint_results = perturbed_constraints
                 else:
                     constraint_results = numpy.hstack(
-                        (result.evaluations.constraints, perturbed_constraints),
+                        (event.results.evaluations.constraints, perturbed_constraints),
                     )
             # The legacy code converts all constraints to the form f(x) >=0:
-            constraint_results = self._convert_constraints(constraint_results)
+            constraint_results = self._convert_constraints(
+                event.config, constraint_results
+            )
 
-        self._add_simulator_results(result.batch, objective_results, constraint_results)
-        if self._workflow.config.nonlinear_constraints:
-            self._add_constraint_values(result.batch, constraint_results)
-        if result.functions is not None:
-            self._add_total_objective(result.functions.weighted_objective)
-        if result.gradients is not None:
-            self._add_gradients(result.gradients.objectives)
+        self._add_simulator_results(
+            event.config, event.results.batch, objective_results, constraint_results
+        )
+        if event.config.nonlinear_constraints:
+            self._add_constraint_values(
+                event.config, event.results.batch, constraint_results
+            )
+        if event.results.functions is not None:
+            self._add_total_objective(event.results.functions.weighted_objective)
+        if event.results.gradients is not None:
+            self._add_gradients(event.config, event.results.gradients.objectives)
 
         # Merit values are dakota specific, load them if the output file exists:
         self._database.update_calculation_result(_get_merit_values(self._merit_file))
@@ -272,13 +282,14 @@ class SqliteStorage:
         self._database.update_calculation_result(_get_merit_values(self._merit_file))
         self._database.set_experiment_ended(time.time())
 
-    def handle_storage_event(self, event, result):
-        if event == OptimizationEvent.START_OPTIMIZATION:
-            self._initialize()
-        elif event == OptimizationEvent.FINISHED_OPTIMIZATION:
-            self._handle_finished_event(event)
-        elif event == OptimizationEvent.FINISHED_BATCH:
-            self._handle_finished_batch_event(event, result)
+    def _set_event_handlers(self, optimizer):
+        optimizer.add_observer(OptimizationEventType.START_OPTIMIZER, self._initialize)
+        optimizer.add_observer(
+            OptimizationEventType.FINISHED_BATCH, self._handle_finished_batch_event
+        )
+        optimizer.add_observer(
+            OptimizationEventType.FINISHED_OPTIMIZER, self._handle_finished_event
+        )
 
     def get_optimal_result(self):
         snapshot = SebaSnapshot(self._output_dir)
