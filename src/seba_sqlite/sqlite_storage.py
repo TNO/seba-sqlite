@@ -219,41 +219,53 @@ class SqliteStorage:
     def _handle_finished_batch_event(self, event):
         logger.debug("Storing batch results in the sqlite database")
 
+        perturbed_variables = event.results.evaluations.perturbed_variables
+        perturbed_variables = (
+            None
+            if perturbed_variables is None
+            else numpy.moveaxis(perturbed_variables, -1, 0)
+        )
+
+        objective_results = event.results.evaluations.objectives
+        if objective_results is not None:
+            objective_results = numpy.moveaxis(objective_results, -1, 0)
+        perturbed_objectives = event.results.evaluations.perturbed_objectives
+        if perturbed_objectives is not None:
+            perturbed_objectives = numpy.moveaxis(perturbed_objectives, -1, 0)
+        constraint_results = event.results.evaluations.constraints
+        if constraint_results is not None:
+            constraint_results = numpy.moveaxis(constraint_results, -1, 0)
+        perturbed_constraints = event.results.evaluations.perturbed_constraints
+        if perturbed_constraints is not None:
+            perturbed_constraints = numpy.moveaxis(perturbed_constraints, -1, 0)
+
         self._add_batch(
-            event.config,
-            event.results.evaluations.variables,
-            event.results.evaluations.perturbed_variables,
+            event.config, event.results.evaluations.variables, perturbed_variables
         )
         self._add_simulations(event.config, event.results)
 
         # Convert back the simulation results to the legacy format:
-        objective_results = event.results.evaluations.objectives
-        if event.results.evaluations.perturbed_objectives is not None:
-            perturbed_objectives = (
-                event.results.evaluations.perturbed_objectives.reshape(
-                    event.results.evaluations.perturbed_objectives.shape[0], -1
-                )
+        if perturbed_objectives is not None:
+            perturbed_objectives = perturbed_objectives.reshape(
+                perturbed_objectives.shape[0], -1
             )
             if objective_results is None:
                 objective_results = perturbed_objectives
             else:
                 objective_results = numpy.hstack(
-                    (event.results.evaluations.objectives, perturbed_objectives),
+                    (objective_results, perturbed_objectives)
                 )
 
-        constraint_results = event.results.evaluations.constraints
         if event.config.nonlinear_constraints is not None:
-            if event.results.evaluations.perturbed_constraints is not None:
-                perturbed_constraints = (
-                    event.results.evaluations.perturbed_constraints.reshape(
-                        event.results.evaluations.perturbed_constraints.shape[0], -1
-                    )
+            if perturbed_constraints is not None:
+                perturbed_constraints = perturbed_constraints.reshape(
+                    perturbed_constraints.shape[0], -1
                 )
                 if constraint_results is None:
                     constraint_results = perturbed_constraints
                 else:
                     constraint_results = numpy.hstack(
-                        (event.results.evaluations.constraints, perturbed_constraints),
+                        (constraint_results, perturbed_constraints)
                     )
             # The legacy code converts all constraints to the form f(x) >=0:
             constraint_results = self._convert_constraints(
