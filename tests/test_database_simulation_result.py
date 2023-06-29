@@ -2,10 +2,12 @@ import os
 import random
 from unittest import TestCase
 
-from seba_sqlite import Database, Function
-from seba_sqlite.exceptions import ObjectNotFoundError
+import pytest
 
-# pylint: disable=import-error,wrong-import-order
+from seba.sqlite import Database, Function
+from seba.sqlite.exceptions import ObjectNotFoundError
+
+
 from .database_utils import (
     _CONTROLS,
     _EXISTING_SIMULATION_NAME,
@@ -29,6 +31,7 @@ def _custom_update(database):
     database.add_simulation_result(**value)
 
 
+@pytest.mark.database
 class TestDatabaseSimulationResult(TestCase):
     @tmpdir(os.getcwd())
     def test_add_result_with_non_existing_function_non_existing_simulation(self):

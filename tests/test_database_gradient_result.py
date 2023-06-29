@@ -1,9 +1,11 @@
 import os
 from unittest import TestCase
 
-from seba_sqlite import Database
+import pytest
 
-# pylint: disable=import-error,wrong-import-order
+from seba.sqlite import Database
+
+
 from .database_utils import (
     _CONTROLS,
     _EXPERIMENT_NAME,
@@ -13,6 +15,7 @@ from .database_utils import (
 )
 
 
+@pytest.mark.database
 class TestDatabaseGradientResult(TestCase):
     @tmpdir(os.getcwd())
     def test_add_gradient_result(self):

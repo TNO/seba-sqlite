@@ -5,10 +5,12 @@ from datetime import datetime
 from os.path import join
 from unittest import TestCase
 
-from seba_sqlite import Database
-from seba_sqlite.exceptions import ObjectNotFoundError
+import pytest
 
-# pylint: disable=import-error,wrong-import-order
+from seba.sqlite import Database
+from seba.sqlite.exceptions import ObjectNotFoundError
+
+
 from .database_utils import (
     _CONTROLS,
     _EXPERIMENT_NAME,
@@ -64,6 +66,7 @@ def _add_sim_result(database):
                 database.set_simulation_ended(sim_name, True)
 
 
+@pytest.mark.database
 class TestDatabase(TestCase):
     @tmpdir(relpath("test_data"))
     def test__full_circle(self):

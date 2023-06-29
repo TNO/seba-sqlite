@@ -6,9 +6,7 @@ import shutil
 import tempfile
 from datetime import datetime
 
-import pytest
-
-from seba_sqlite import Database
+from seba.sqlite import Database
 
 
 def relpath(*path):
@@ -106,7 +104,6 @@ _EXISTING_SIMULATION_NAME = "Existing simulation"
 
 
 # This could use some refactoring, but since its just a test, leave it.
-# pylint: disable=too-many-branches,too-complex
 def load_info_to_db(database, **kwargs):
     plain_names = ["Batch"]
     special = ["Function", "Simulation", "control_definition"]

@@ -1,7 +1,19 @@
+# Copyright (C) The Netherlands Organisation for Applied Scientific Research,
+# TNO, 2015-2022. All rights reserved.
+#
+# This file is part of Seba: a proprietary software library for ensemble based
+# optimization developed by TNO. This file, the Seba software or data or
+# information contained in the software may not be copied or distributed without
+# prior written permission from TNO.
+#
+# Seba and the information and data contained in this software are confidential.
+# Neither the whole or any part of the software and the data and information it
+# contains may be disclosed to any third party without the prior written consent
+# of The Netherlands Organisation for Applied Scientific Research (TNO).
+
 from .exceptions import ObjectNotFoundError
 
 
-# pylint: disable=too-many-instance-attributes
 class Experiment:
     ID_NAME = "ID"
     NAME_NAME = "NAME"
@@ -17,7 +29,7 @@ class Experiment:
         starttime=None,
         endtime=None,
         commit=False,
-    ):  # pylint: disable=too-many-arguments
+    ):
         # The class "constructor" - It's actually an initializer
         # if the request contains an experiment_id , get the experiment from the database.
 

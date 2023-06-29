@@ -1,3 +1,16 @@
+# Copyright (C) The Netherlands Organisation for Applied Scientific Research,
+# TNO, 2015-2022. All rights reserved.
+#
+# This file is part of Seba: a proprietary software library for ensemble based
+# optimization developed by TNO. This file, the Seba software or data or
+# information contained in the software may not be copied or distributed without
+# prior written permission from TNO.
+#
+# Seba and the information and data contained in this software are confidential.
+# Neither the whole or any part of the software and the data and information it
+# contains may be disclosed to any third party without the prior written consent
+# of The Netherlands Organisation for Applied Scientific Research (TNO).
+
 import os.path
 import sqlite3
 import time
@@ -16,7 +29,6 @@ from .simulation_result import SimulationResult
 
 
 # This class is rather large since it is the interface to the database:
-# pylint: disable=too-many-public-methods
 class Database:
     FILENAME = "seba.db"
 
@@ -347,7 +359,7 @@ class Database:
         normalization=1.0,
         rhs_value=0.0,
         constraint_type=None,
-    ):  # pylint: disable=too-many-arguments
+    ):
         # Return a new function with the given name and description.
         # :param name: the name of the function
         # :type name: str

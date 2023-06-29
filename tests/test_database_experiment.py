@@ -2,13 +2,16 @@ import os
 from datetime import datetime
 from unittest import TestCase
 
-from seba_sqlite import Database
-from seba_sqlite.exceptions import ObjectNotFoundError
+import pytest
 
-# pylint: disable=import-error,wrong-import-order
+from seba.sqlite import Database
+from seba.sqlite.exceptions import ObjectNotFoundError
+
+
 from .database_utils import _EXPERIMENT_NAME, tmpdir
 
 
+@pytest.mark.database
 class TestDatabaseExperiment(TestCase):
     @tmpdir(os.getcwd())
     def test_create_experiment(self):

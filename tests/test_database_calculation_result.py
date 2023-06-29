@@ -2,9 +2,11 @@ import os
 import random
 from unittest import TestCase
 
-from seba_sqlite import Database
+import pytest
 
-# pylint: disable=import-error,wrong-import-order
+from seba.sqlite import Database
+
+
 from .database_utils import (
     _CONTROLS,
     _EXISTING_SIMULATION_NAME,
@@ -35,6 +37,7 @@ def _get_database():
     return database
 
 
+@pytest.mark.database
 class TestDatabaseCalculationResult(TestCase):
     def test_add_calculation_result(self):
         with tmp():
@@ -94,7 +97,6 @@ class TestDatabaseCalculationResult(TestCase):
             database = _get_database()
 
             add_results()
-            # pylint: disable=bad-builtin
             merit_items = list(filter(lambda x: x["value"] is not None, data))
             database.update_calculation_result(
                 [{"iter": item["iter"], "value": item["value"]} for item in merit_items]

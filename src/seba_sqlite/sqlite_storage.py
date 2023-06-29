@@ -7,7 +7,7 @@ from collections import namedtuple
 from itertools import count
 from pathlib import Path
 
-import numpy
+import numpy as np
 
 from seba.enums import ConstraintType, OptimizationEventType
 
@@ -155,8 +155,8 @@ class SqliteStorage:
         if constraint_results is None:
             results = objective_results
         else:
-            results = numpy.vstack((objective_results, constraint_results))
-        statuses = numpy.logical_and.reduce(numpy.isfinite(results), axis=0)
+            results = np.vstack((objective_results, constraint_results))
+        statuses = np.logical_and.reduce(np.isfinite(results), axis=0)
         names = config.objective_functions.names
         if config.nonlinear_constraints is not None:
             names += config.nonlinear_constraints.names
@@ -172,7 +172,7 @@ class SqliteStorage:
         self._database.set_batch_ended(time.time(), True)
 
     def _add_constraint_values(self, config, batch, constraint_values):
-        statuses = numpy.logical_and.reduce(numpy.isfinite(constraint_values), axis=0)
+        statuses = np.logical_and.reduce(np.isfinite(constraint_values), axis=0)
         for sim_id, status in enumerate(statuses):
             if status:
                 for idx, constraint_name in enumerate(
@@ -188,7 +188,6 @@ class SqliteStorage:
                         value=constraint_values[idx, sim_id],
                     )
 
-    # pylint: disable=unused-argument
     def _add_gradients(self, config, objective_gradients):
         for grad_index, gradient in enumerate(objective_gradients):
             for control_index, control_name in enumerate(
@@ -223,21 +222,21 @@ class SqliteStorage:
         perturbed_variables = (
             None
             if perturbed_variables is None
-            else numpy.moveaxis(perturbed_variables, -1, 0)
+            else np.moveaxis(perturbed_variables, -1, 0)
         )
 
         objective_results = event.results.evaluations.objectives
         if objective_results is not None:
-            objective_results = numpy.moveaxis(objective_results, -1, 0)
+            objective_results = np.moveaxis(objective_results, -1, 0)
         perturbed_objectives = event.results.evaluations.perturbed_objectives
         if perturbed_objectives is not None:
-            perturbed_objectives = numpy.moveaxis(perturbed_objectives, -1, 0)
+            perturbed_objectives = np.moveaxis(perturbed_objectives, -1, 0)
         constraint_results = event.results.evaluations.constraints
         if constraint_results is not None:
-            constraint_results = numpy.moveaxis(constraint_results, -1, 0)
+            constraint_results = np.moveaxis(constraint_results, -1, 0)
         perturbed_constraints = event.results.evaluations.perturbed_constraints
         if perturbed_constraints is not None:
-            perturbed_constraints = numpy.moveaxis(perturbed_constraints, -1, 0)
+            perturbed_constraints = np.moveaxis(perturbed_constraints, -1, 0)
 
         self._add_batch(
             event.config, event.results.evaluations.variables, perturbed_variables
@@ -252,9 +251,7 @@ class SqliteStorage:
             if objective_results is None:
                 objective_results = perturbed_objectives
             else:
-                objective_results = numpy.hstack(
-                    (objective_results, perturbed_objectives)
-                )
+                objective_results = np.hstack((objective_results, perturbed_objectives))
 
         if event.config.nonlinear_constraints is not None:
             if perturbed_constraints is not None:
@@ -264,7 +261,7 @@ class SqliteStorage:
                 if constraint_results is None:
                     constraint_results = perturbed_constraints
                 else:
-                    constraint_results = numpy.hstack(
+                    constraint_results = np.hstack(
                         (constraint_results, perturbed_constraints)
                     )
             # The legacy code converts all constraints to the form f(x) >=0:

@@ -1,10 +1,12 @@
 import os
 from unittest import TestCase
 
-from seba_sqlite import Database
-from seba_sqlite.exceptions import ObjectNotFoundError
+import pytest
 
-# pylint: disable=import-error,wrong-import-order
+from seba.sqlite import Database
+from seba.sqlite.exceptions import ObjectNotFoundError
+
+
 from .database_utils import (
     _EXPERIMENT_NAME,
     _REALIZATION_WEIGHTS,
@@ -14,6 +16,7 @@ from .database_utils import (
 )
 
 
+@pytest.mark.database
 class TestDatabaseRealization(TestCase):
     @tmpdir(os.getcwd())
     def test_add_realization(self):

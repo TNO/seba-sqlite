@@ -2,10 +2,12 @@ import os
 from datetime import datetime
 from unittest import TestCase
 
-from seba_sqlite import Database
-from seba_sqlite.exceptions import ObjectNotFoundError
+import pytest
 
-# pylint: disable=import-error,wrong-import-order
+from seba.sqlite import Database
+from seba.sqlite.exceptions import ObjectNotFoundError
+
+
 from .database_utils import (
     _EXPERIMENT_NAME,
     _NUMBER_OF_BATCHES,
@@ -14,6 +16,7 @@ from .database_utils import (
 )
 
 
+@pytest.mark.database
 class TestDatabaseBatch(TestCase):
     @tmpdir(os.getcwd())
     def test_add_batch(self):
