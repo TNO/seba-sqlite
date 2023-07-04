@@ -135,7 +135,7 @@ class SqliteStorage:
                 self._database.add_simulation(
                     realization_name=str(realization_name),
                     set_id=self._control_ensemble_id,
-                    sim_name=f"{result.batch}_{next(simulation_index)}",
+                    sim_name=f"{result.eval_id}_{next(simulation_index)}",
                     is_gradient=False,
                 )
         if result.gradients is not None:
@@ -145,7 +145,7 @@ class SqliteStorage:
                     self._database.add_simulation(
                         realization_name=str(realization_name),
                         set_id=self._gradient_ensemble_id,
-                        sim_name=f"{result.batch}_{next(simulation_index)}",
+                        sim_name=f"{result.eval_id}_{next(simulation_index)}",
                         is_gradient=True,
                     )
 
@@ -270,11 +270,11 @@ class SqliteStorage:
             )
 
         self._add_simulator_results(
-            event.config, event.results.batch, objective_results, constraint_results
+            event.config, event.results.eval_id, objective_results, constraint_results
         )
         if event.config.nonlinear_constraints:
             self._add_constraint_values(
-                event.config, event.results.batch, constraint_results
+                event.config, event.results.eval_id, constraint_results
             )
         if event.results.functions is not None:
             self._add_total_objective(event.results.functions.weighted_objective)
@@ -294,7 +294,7 @@ class SqliteStorage:
     def _set_event_handlers(self, optimizer):
         optimizer.add_observer(OptimizationEventType.START_OPTIMIZER, self._initialize)
         optimizer.add_observer(
-            OptimizationEventType.FINISHED_BATCH, self._handle_finished_batch_event
+            OptimizationEventType.FINISHED_EVALUATION, self._handle_finished_batch_event
         )
         optimizer.add_observer(
             OptimizationEventType.FINISHED_OPTIMIZER, self._handle_finished_event
