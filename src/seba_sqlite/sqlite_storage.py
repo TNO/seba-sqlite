@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 from seba.enums import ConstraintType, OptimizationEventType
-
+from seba.results import FunctionResults, GradientResults
 from .database import Database
 from .snapshot import SebaSnapshot
 
@@ -103,7 +103,6 @@ class SqliteStorage:
             self._database.add_realization(str(name), weight)
 
     def _add_batch(self, config, controls, perturbed_controls):
-        self._database.add_batch()
         self._gradient_ensemble_id += 1
         self._control_ensemble_id = self._gradient_ensemble_id
         control_names = _convert_names(config.variables.names)
@@ -130,7 +129,7 @@ class SqliteStorage:
     def _add_simulations(self, config, result):
         self._gradient_ensemble_id = self._control_ensemble_id
         simulation_index = count()
-        if result.functions is not None:
+        if isinstance(result, FunctionResults):
             for realization_name in config.realizations.names:
                 self._database.add_simulation(
                     realization_name=str(realization_name),
@@ -138,7 +137,7 @@ class SqliteStorage:
                     sim_name=f"{result.eval_id}_{next(simulation_index)}",
                     is_gradient=False,
                 )
-        if result.gradients is not None:
+        if isinstance(result, GradientResults):
             for realization_name in config.realizations.names:
                 for _ in range(config.gradient.number_of_perturbations):
                     self._gradient_ensemble_id += 1
@@ -169,7 +168,6 @@ class SqliteStorage:
                         sim_name, results[function_idx, sim_idx], name, 0
                     )
             self._database.set_simulation_ended(sim_name, status)
-        self._database.set_batch_ended(time.time(), True)
 
     def _add_constraint_values(self, config, batch, constraint_values):
         statuses = np.logical_and.reduce(np.isfinite(constraint_values), axis=0)
@@ -215,33 +213,32 @@ class SqliteStorage:
                 constraint_results[idx] *= -1.0
         return constraint_results
 
-    def _handle_finished_batch_event(self, event):
-        logger.debug("Storing batch results in the sqlite database")
-
-        perturbed_variables = event.results.evaluations.perturbed_variables
-        perturbed_variables = (
-            None
-            if perturbed_variables is None
-            else np.moveaxis(perturbed_variables, -1, 0)
-        )
-
-        objective_results = event.results.evaluations.objectives
-        if objective_results is not None:
+    def _store_results(self, config, results):
+        if isinstance(results, FunctionResults):
+            objective_results = results.evaluations.objectives
             objective_results = np.moveaxis(objective_results, -1, 0)
-        perturbed_objectives = event.results.evaluations.perturbed_objectives
-        if perturbed_objectives is not None:
-            perturbed_objectives = np.moveaxis(perturbed_objectives, -1, 0)
-        constraint_results = event.results.evaluations.constraints
-        if constraint_results is not None:
-            constraint_results = np.moveaxis(constraint_results, -1, 0)
-        perturbed_constraints = event.results.evaluations.perturbed_constraints
-        if perturbed_constraints is not None:
-            perturbed_constraints = np.moveaxis(perturbed_constraints, -1, 0)
+            constraint_results = results.evaluations.constraints
+            if constraint_results is not None:
+                constraint_results = np.moveaxis(constraint_results, -1, 0)
+        else:
+            objective_results = None
+            constraint_results = None
 
-        self._add_batch(
-            event.config, event.results.evaluations.variables, perturbed_variables
-        )
-        self._add_simulations(event.config, event.results)
+        if isinstance(results, GradientResults):
+            perturbed_variables = results.evaluations.perturbed_variables
+            perturbed_variables = np.moveaxis(perturbed_variables, -1, 0)
+            perturbed_objectives = results.evaluations.perturbed_objectives
+            perturbed_objectives = np.moveaxis(perturbed_objectives, -1, 0)
+            perturbed_constraints = results.evaluations.perturbed_constraints
+            if perturbed_constraints is not None:
+                perturbed_constraints = np.moveaxis(perturbed_constraints, -1, 0)
+        else:
+            perturbed_variables = None
+            perturbed_objectives = None
+            perturbed_constraints = None
+
+        self._add_batch(config, results.evaluations.variables, perturbed_variables)
+        self._add_simulations(config, results)
 
         # Convert back the simulation results to the legacy format:
         if perturbed_objectives is not None:
@@ -253,7 +250,7 @@ class SqliteStorage:
             else:
                 objective_results = np.hstack((objective_results, perturbed_objectives))
 
-        if event.config.nonlinear_constraints is not None:
+        if config.nonlinear_constraints is not None:
             if perturbed_constraints is not None:
                 perturbed_constraints = perturbed_constraints.reshape(
                     perturbed_constraints.shape[0], -1
@@ -265,21 +262,31 @@ class SqliteStorage:
                         (constraint_results, perturbed_constraints)
                     )
             # The legacy code converts all constraints to the form f(x) >=0:
-            constraint_results = self._convert_constraints(
-                event.config, constraint_results
-            )
+            constraint_results = self._convert_constraints(config, constraint_results)
 
         self._add_simulator_results(
-            event.config, event.results.eval_id, objective_results, constraint_results
+            config, results.eval_id, objective_results, constraint_results
         )
-        if event.config.nonlinear_constraints:
-            self._add_constraint_values(
-                event.config, event.results.eval_id, constraint_results
-            )
-        if event.results.functions is not None:
-            self._add_total_objective(event.results.functions.weighted_objective)
-        if event.results.gradients is not None:
-            self._add_gradients(event.config, event.results.gradients.objectives)
+        if config.nonlinear_constraints:
+            self._add_constraint_values(config, results.eval_id, constraint_results)
+        if isinstance(results, FunctionResults):
+            self._add_total_objective(results.functions.weighted_objective)
+        if isinstance(results, GradientResults):
+            self._add_gradients(config, results.gradients.objectives)
+
+    def _handle_finished_batch_event(self, event):
+        logger.debug("Storing batch results in the sqlite database")
+
+        last_batch = -1
+        for results in event.results:
+            if results.eval_id != last_batch:
+                self._database.add_batch()
+            self._store_results(event.config, results)
+            if results.eval_id != last_batch:
+                self._database.set_batch_ended
+            last_batch = results.eval_id
+
+        self._database.set_batch_ended(time.time(), True)
 
         # Merit values are dakota specific, load them if the output file exists:
         self._database.update_calculation_result(_get_merit_values(self._merit_file))
