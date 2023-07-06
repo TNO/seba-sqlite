@@ -134,7 +134,7 @@ class SqliteStorage:
                 self._database.add_simulation(
                     realization_name=str(realization_name),
                     set_id=self._control_ensemble_id,
-                    sim_name=f"{result.eval_id}_{next(simulation_index)}",
+                    sim_name=f"{result.batch_id}_{next(simulation_index)}",
                     is_gradient=False,
                 )
         if isinstance(result, GradientResults):
@@ -144,7 +144,7 @@ class SqliteStorage:
                     self._database.add_simulation(
                         realization_name=str(realization_name),
                         set_id=self._gradient_ensemble_id,
-                        sim_name=f"{result.eval_id}_{next(simulation_index)}",
+                        sim_name=f"{result.batch_id}_{next(simulation_index)}",
                         is_gradient=True,
                     )
 
@@ -265,10 +265,10 @@ class SqliteStorage:
             constraint_results = self._convert_constraints(config, constraint_results)
 
         self._add_simulator_results(
-            config, results.eval_id, objective_results, constraint_results
+            config, results.batch_id, objective_results, constraint_results
         )
         if config.nonlinear_constraints:
-            self._add_constraint_values(config, results.eval_id, constraint_results)
+            self._add_constraint_values(config, results.batch_id, constraint_results)
         if isinstance(results, FunctionResults):
             self._add_total_objective(results.functions.weighted_objective)
         if isinstance(results, GradientResults):
@@ -279,12 +279,12 @@ class SqliteStorage:
 
         last_batch = -1
         for results in event.results:
-            if results.eval_id != last_batch:
+            if results.batch_id != last_batch:
                 self._database.add_batch()
             self._store_results(event.config, results)
-            if results.eval_id != last_batch:
+            if results.batch_id != last_batch:
                 self._database.set_batch_ended
-            last_batch = results.eval_id
+            last_batch = results.batch_id
 
         self._database.set_batch_ended(time.time(), True)
 
