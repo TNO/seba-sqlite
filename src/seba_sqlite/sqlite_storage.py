@@ -277,14 +277,28 @@ class SqliteStorage:
     def _handle_finished_batch_event(self, event):
         logger.debug("Storing batch results in the sqlite database")
 
+        results = []
+        best_value = -np.inf
+        best_results = None
+        for item in event.results:
+            if isinstance(item, GradientResults):
+                results.append(item)
+            if (
+                isinstance(item, FunctionResults)
+                and item.functions.weighted_objective > best_value
+            ):
+                best_value = item.functions.weighted_objective
+                best_results = item
+        if best_results is not None:
+            results = [best_results] + results
         last_batch = -1
-        for results in event.results:
-            if results.batch_id != last_batch:
+        for item in results:
+            if item.batch_id != last_batch:
                 self._database.add_batch()
-            self._store_results(event.config, results)
-            if results.batch_id != last_batch:
+            self._store_results(event.config, item)
+            if item.batch_id != last_batch:
                 self._database.set_batch_ended
-            last_batch = results.batch_id
+            last_batch = item.batch_id
 
         self._database.set_batch_ended(time.time(), True)
 
