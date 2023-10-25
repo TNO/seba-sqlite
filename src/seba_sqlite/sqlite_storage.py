@@ -313,12 +313,15 @@ class SqliteStorage:
         self._database.set_experiment_ended(time.time())
 
     def _set_event_handlers(self, optimizer):
-        optimizer.add_observer(OptimizationEventType.START_OPTIMIZER, self._initialize)
+        optimizer.add_observer(
+            OptimizationEventType.START_OPTIMIZATION_STEP, self._initialize
+        )
         optimizer.add_observer(
             OptimizationEventType.FINISHED_EVALUATION, self._handle_finished_batch_event
         )
         optimizer.add_observer(
-            OptimizationEventType.FINISHED_OPTIMIZER, self._handle_finished_event
+            OptimizationEventType.FINISHED_OPTIMIZATION_STEP,
+            self._handle_finished_event,
         )
 
     def get_optimal_result(self):
