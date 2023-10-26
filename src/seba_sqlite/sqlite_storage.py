@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
-from seba.enums import ConstraintType, OptimizationEventType
+from seba.enums import ConstraintType, EventType
 from seba.results import FunctionResults, GradientResults
 from .database import Database
 from .snapshot import SebaSnapshot
@@ -49,30 +49,37 @@ class SqliteStorage:
         # Connect event handlers.
         self._set_event_handlers(optimizer)
 
+        self._initialized = False
+
     @property
     def file(self):
         return self._database.location
 
     def _initialize(self, event):
+        if self._initialized:
+            return
+        self._initialized = True
+
         self._database.add_experiment(
             name="optimization_experiment", start_time_stamp=time.time()
         )
 
         # Add configuration values.
+        config = event.config
         for control_name, initial_value, lower_bound, upper_bound in zip(
-            _convert_names(event.config.variables.names),
-            event.config.variables.initial_values,
-            event.config.variables.lower_bounds,
-            event.config.variables.upper_bounds,
+            _convert_names(config.variables.names),
+            config.variables.initial_values,
+            config.variables.lower_bounds,
+            config.variables.upper_bounds,
         ):
             self._database.add_control_definition(
                 control_name, initial_value, lower_bound, upper_bound
             )
 
         for name, weight, scale in zip(
-            event.config.objective_functions.names,
-            event.config.objective_functions.weights,
-            event.config.objective_functions.scales,
+            config.objective_functions.names,
+            config.objective_functions.weights,
+            config.objective_functions.scales,
         ):
             self._database.add_function(
                 name=name,
@@ -81,12 +88,12 @@ class SqliteStorage:
                 normalization=1.0 / scale,
             )
 
-        if event.config.nonlinear_constraints is not None:
+        if config.nonlinear_constraints is not None:
             for name, scale, rhs_value, constraint_type in zip(
-                event.config.nonlinear_constraints.names,
-                event.config.nonlinear_constraints.scales,
-                event.config.nonlinear_constraints.rhs_values,
-                event.config.nonlinear_constraints.types,
+                config.nonlinear_constraints.names,
+                config.nonlinear_constraints.scales,
+                config.nonlinear_constraints.rhs_values,
+                config.nonlinear_constraints.types,
             ):
                 self._database.add_function(
                     name=name,
@@ -97,8 +104,8 @@ class SqliteStorage:
                 )
 
         for name, weight in zip(
-            event.config.realizations.names,
-            event.config.realizations.weights,
+            config.realizations.names,
+            config.realizations.weights,
         ):
             self._database.add_realization(str(name), weight)
 
@@ -314,13 +321,13 @@ class SqliteStorage:
 
     def _set_event_handlers(self, optimizer):
         optimizer.add_observer(
-            OptimizationEventType.START_OPTIMIZATION_STEP, self._initialize
+            EventType.START_OPTIMIZER_STEP, self._initialize
         )
         optimizer.add_observer(
-            OptimizationEventType.FINISHED_EVALUATION, self._handle_finished_batch_event
+            EventType.FINISHED_EVALUATION, self._handle_finished_batch_event
         )
         optimizer.add_observer(
-            OptimizationEventType.FINISHED_OPTIMIZATION_STEP,
+            EventType.FINISHED_WORKFLOW,
             self._handle_finished_event,
         )
 
