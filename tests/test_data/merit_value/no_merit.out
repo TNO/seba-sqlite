@@ -1,0 +1,59 @@
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Apr 24 12:00:27 2020
+
+**********************************************************
+readOptInput: No opt.input file found
+readOptInput: default values will be used
+
+
+=========  Initial state  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy 
+     00x1.999999999999ap-4	-0x1.a89832b32f4d4p+0	     0x1p-52
+     10x1.999999999999ap-3	0x1.75d26ebfce8bep-1	     0x1p-52
+     20x1.3333333333333p-2	0x1.1e69cada6a124p-2	     0x1p-52
+     30x1.999999999999ap-2	-0x1.127e1afce195bp-2	     0x1p-52
+     4      0x1p-1	-0x1.e6b8424d4ddabp+1	     0x1p-52
+     50x1.3333333333333p-1	0x1.61feb8ec35842p+1	     0x1p-52
+     60x1.6666666666666p-1	-0x1.da91ba9ade624p-1	     0x1p-52
+     70x1.999999999999ap-1	0x1.03df3674b8e07p-1	     0x1p-52
+     80x1.ccccccccccccdp-1	0x1.1dbabfaecef58p+0	     0x1p-52
+Function Value     = 0x1.30c083126e979p+5
+Norm of gradient   = 0x1.5213343fb7db3p+2
+
+
+==============================================
+
+
+		Bound constrained Quasi-Newton Method with Line Search
+
+  Iter      F(x)       ||grad||     ||step||      f/g
+
+    0 0x1.30c083126e979p+5 0x1.5213343fb7db3p+2
+    1 0x1.d9c9eecbfb15bp+4 0x1.8532d97912d15p+3 0x1.25626de0aa7a1p+0  N     2     2
+OptBCNewtonLike : variable added to working set : 5
+OptBCNewtonLike: Current working set  
+ ----- variable index:      5	0
+     2 0x1.0639c0ebedfa4p+4 0x1.0dce62660f3bcp+2 0x1.c6b63abbaeefbp-1  N     3     3
+OptBCNewtonLike : variable added to working set : 4
+OptBCNewtonLike: Current working set  
+ ----- variable index:      4	2     5	0
+     3 0x1.e132617c1bda5p+3 0x1.8586b9eb30261p+3 0x1.7cbec16274131p-3  N     4     4
+OptBCNewtonLike : variable added to working set : 3
+OptBCNewtonLike: Current working set  
+ ----- variable index:      3	-1.38778e-17     4	2     5	0
+     4 0x1.1b1cc100e6afdp+3 0x1.3d55ffef9d20bp+3 0x1.5816cb1fc21ffp-1  N     5     5
+OptBCNewtonLike : variable added to working set : 8
+OptBCNewtonLike: Current working set  
+ ----- variable index:      3	-1.38778e-17     4	2     5	0     8	0
+     5 0x1.db6c3760bf5d8p-2 0x1.e76820b82853p+3 0x1.0299a15be5ebcp-1  N     6     6
+OptBCNewtonLike : variable added to working set : 7
+OptBCNewtonLike: Current working set  
+ ----- variable index:      3	-1.38778e-17     4	2     5	0     7	2     8	0
+ OptBCNewtonLike : reduced_grad_norm = 9.18145
+OptBCNewtonLike : variable deleted from working set : 5
+OptBCNewtonLike: Current working set  
+ ----- variable index:      3	-1.38778e-17     4	2     7	2     8	0
+ 

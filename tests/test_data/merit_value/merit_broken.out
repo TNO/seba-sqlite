@@ -1,0 +1,132 @@
+**********************************************************
+OPT++ version 2.4
+Job run at Fri Apr 24 14:02:57 2020
+
+**********************************************************
+
+		 NIPS Iteration Summary
+
+	Nonlinear Interior-Point Method Method with Line Search 
+ 
+  Merit Function =  1 
+
+######### NEXT LINE MANUALLY ADDED FOR TESTING PURPOSES ONLY #########
+29 0x1.873d5bab21816p-2 0x1.4ad1aec717bcdp-200x1.f7026b25158f7p-3 0x1.d79acc1b8e669p-2   39  12   0x1.9p+6
+
+  Iter    F(x)       mu          alpha      Merit    feval    btracks  Penalty
+
+    0 0x1.30c083126e979p+5 0x1.3b7e6012569f4p+0 
+    1 0x1.1fb67a0f9096cp+5 0x1.3b7e6012569f4p+00x1.d2f9ab3133b1fp-1 0x1.7dc7851916cd2p+11    2   0   0x1.9p+6
+    2 0x1.0941f212d7732p+4 0x1.3b7e6012569f4p+0      0x1p+0 0x1.1a13bc2b1c062p+11    3   0   0x1.9p+6
+    3 0x1.505f6fd21ff2ep+4 0x1.3b7e6012569f4p+0      0x1p+0 0x1.d3015fc2ab6bdp+10    4   0   0x1.9p+6
+    4 0x1.03de7ea5f84cbp+3 0x1.93d4f5da0879fp-70x1.41ea7bc2de179p-2 0x1.6ff39e1077ed6p+10    5   0   0x1.9p+6
+    5 0x1.390e0221426fep+0 0x1.93d4f5da0879fp-70x1.40bc006428b48p-1 0x1.fe10096cd21e9p+8    6   0   0x1.9p+6
+    6 0x1.bab0856e696a2p-2 0x1.93d4f5da0879fp-70x1.16c6ed446000cp-1 0x1.04b7923270c1ep+8    7   0   0x1.9p+6
+    7 0x1.0f090f733a8a4p-2 0x1.93d4f5da0879fp-70x1.92a8c0aac200ep-1 0x1.2a727589e08dbp+7    8   0   0x1.9p+6
+    8 0x1.d700cd855970bp-4 0x1.93d4f5da0879fp-70x1.a080093acbe8fp-5 0x1.1d2fb475442a2p+7   10   1   0x1.9p+6
+    9 0x1.dbd7b2031ceafp-2 0x1.93d4f5da0879fp-70x1.4fddc978fd102p-6 0x1.1ba00b65ea34fp+7   12   2   0x1.9p+6
+   10 0x1.175e84f09528fp-1 0x1.93d4f5da0879fp-70x1.5155fbca2cdcap-3 0x1.122b65c49a3b5p+7   14   3   0x1.9p+6
+   11 0x1.eddbdb5d89481p-2 0x1.93d4f5da0879fp-70x1.154e594cf8239p-2 0x1.0949298eb44adp+7   16   4   0x1.9p+6
+   12 0x1.b4e4430b178b3p-2 0x1.93d4f5da0879fp-70x1.22cd46687176cp-4 0x1.084b17771bf82p+7   18   5   0x1.9p+6
+   13 0x1.84998d045fe11p-2 0x1.93d4f5da0879fp-70x1.225e335d15629p-2 0x1.0366dbff99d24p+7   20   6   0x1.9p+6
+   14 0x1.5f034b0e1b4bbp-2 0x1.93d4f5da0879fp-70x1.f7e1f037954fcp-4 0x1.021d6ea11d6d1p+7   22   7   0x1.9p+6
+   15 0x1.8b573eab367a1p-2 0x1.93d4f5da0879fp-70x1.20f0dce0c4342p-3 0x1.01321a71218p+7   24   8   0x1.9p+6
+   16 0x1.8d03968d759efp-2 0x1.93d4f5da0879fp-70x1.790f2bed2b1f6p-4 0x1.00e84b74a27fbp+7   26   9   0x1.9p+6
+   17 0x1.014013ec460eep-2 0x1.93d4f5da0879fp-7      0x1p+0 0x1.fa85fd206d499p+6   27   9   0x1.9p+6
+   18 0x1.76a1a500d5e8dp-2 0x1.0273d08b8a8b8p-130x1.6cfaada16ccbep-2 0x1.d3f41c9cdaeebp+3   28   9   0x1.9p+6
+   19 0x1.81565c2d27807p-2 0x1.0273d08b8a8b8p-130x1.4e274f4edcb4ep-1 0x1.9a6e68c8f730fp+2   29   9   0x1.9p+6
+   20 0x1.789eba6aca793p-2 0x1.0273d08b8a8b8p-13      0x1p+0 0x1.60144e0f1f5bbp+1   30   9   0x1.9p+6
+   21 0x1.765061416377ap-2 0x1.0273d08b8a8b8p-130x1.90002ee9aebbdp-5 0x1.5f2b0ce4db847p+1   32  10   0x1.9p+6
+   22 0x1.7face67d77faep-2 0x1.0273d08b8a8b8p-13      0x1p+0 0x1.5d01175d98d73p+1   33  10   0x1.9p+6
+   23 0x1.84ba0e8427419p-2 0x1.0273d08b8a8b8p-130x1.c032986d3ffd3p-5 0x1.5ccd4c88e3b0ap+1   35  11   0x1.9p+6
+   24 0x1.87eaa2a0a9585p-2 0x1.0273d08b8a8b8p-130x1.be9a5618602c3p-4 0x1.5cb7a900f6feap+1   37  12   0x1.9p+6
+   25 0x1.8b76b3bb83cf3p-2 0x1.4ad1aec717bcdp-200x1.5734b3eb90d14p-1 0x1.f47fdc55a39ep-2   38  12   0x1.9p+6
+   26 0x1.873d5bab21816p-2 0x1.4ad1aec717bcdp-200x1.f7026b25158f7p-3 0x1.d79acc1b8e669p-2   39  12   0x1.9p+6
+step_type = -1
+
+
+=========  Solution from Opt++  ===========
+
+######### NEXT LINE MANUALLY ADDED FOR TESTING PURPOSES ONLY #########
+29 0x1.873d5bab21816p-2 0x1.4ad1aec717bcdp-200x1.f7026b25158f7p-3 0x1.d79acc1b8e669p-2   39  12   0x1.9p+6
+
+Optimization method       = Nonlinear Interior-Point Method
+Dimension of the problem  = 9
+No. equalities            = 0
+No. inequalities          = 19
+Merit Function (0= NormFmu, 1 = Argaez, 2 = Vanderbei) = 1
+######### NEXT LINE MANUALLY INCLUDES A NON-ASCII CHARACTER FOR TESTING PURPOSES ONLY #########
+Return code               = -1 (Algorithm terminated - Number of backtracks exceeds the specified limi�)
+No. iterations taken      = 27
+No. function evaluations  = 44
+No. gradient evaluations  = 27
+No. backtracks in lnsrch  = 17
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	    xc 		 grad  		 fcn_accrcy
+     00x1.264fe6307c861p-6	-0x1.c2bc20c771246p+0	     0x1p-52
+     10x1.e70235704d8bfp-3	-0x1.3d390f3080261p+0	     0x1p-52
+     20x1.c6e3b6781256dp-5	-0x1.8de27936ea953p+1	     0x1p-52
+     30x1.af64948b94be4p+0	-0x1.9f6bd5b9fc954p+1	     0x1p-52
+     40x1.fff84e0e6a833p+0	-0x1.417378aa8d3d6p+2	     0x1p-52
+     50x1.d987d247e34ddp-2	0x1.5466a2a070078p-2	     0x1p-52
+     60x1.31d92fec52f7dp-1	0x1.c12e570e74b05p+1	     0x1p-52
+     70x1.ffffff750780bp+0	-0x1.20b67a4c3c11fp+2	     0x1p-52
+     80x1.12861b97c1a83p-4	-0x1.3219c9ea41ce8p-3	     0x1p-52
+Function Value     = 0x1.873d5bab21816p-2
+Norm of gradient   = 0x1.234810bceb237p+3
+
+
+==============================================
+
+
+
+=========  Solution from Opt++  ===========
+
+
+    i	   y
+
+
+
+=====================================
+
+
+    i	    z 	      s
+
+    00x1.066107464a194p-130x1.f433cdc9a2e37p-3
+    10x1.06759d2cf37e5p-90x1.264fe6307c852p-6
+    20x1.181adbf92d9a2p-130x1.e70235704d8bfp-3
+    30x1.2b4ec30be1acbp-110x1.c6e3b6781256ap-5
+    40x1.39a191beeadbfp-160x1.af64948b94be4p+0
+    50x1.08e40aae2d608p-160x1.fff84e0e6a833p+0
+    60x1.1b7932c6e991ep-140x1.d987d247e34dcp-2
+    70x1.ae9fcb4edb2fp-150x1.31d92fec52f7dp-1
+    80x1.08e04951527fbp-160x1.ffffff750780bp+0
+    90x1.593a2c00afa18p-120x1.12861b97c1a83p-4
+   100x1.0a7ea037b7f11p-160x1.fb66c0673e0dep+0
+   110x1.2c6a8d3200e18p-160x1.c31fb951f64e8p+0
+   120x1.100b5f066b2efp-160x1.f1c8e24c3f6d4p+0
+   130x1.a94d7488034afp-140x1.426dadd1ad07p-2
+   140x1.1c5b741354p-140x1.ec7c655f35f5ep-14
+   150x1.5a090d4564664p-160x1.899e0b6e072c8p+0
+   160x1.7e5f6828a5b0dp-160x1.67136809d6841p+0
+   170x1.bce72d2e66e1dp+20x1.15f0fea4ebdd8p-25
+   180x1.14022610a3d36p-160x1.eed79e4683e58p+0
+
+
+==========  Tolerances  ===========
+
+Machine Epsilon      = 2.22045e-16
+Maximum Step         = 1000
+Minimum Step         = 1.49012e-08
+Maximum Iter         = 100
+Maximum Backtracks   = 5
+Maximum Fcn Eval     = 1000
+Step Tolerance       = 1.49012e-08
+Function Tolerance   = 0.01
+Constraint Tolerance = 1.49012e-08
+Gradient Tolerance   = 0.0001
+LineSearch Tolerance = 0.0001
