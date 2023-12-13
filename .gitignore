@@ -2,4 +2,3 @@
 **/dist/**
 src/**egg-info/**
 src/**/seba_sqlite/version.py
-.vscode/**
