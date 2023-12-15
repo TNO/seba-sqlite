@@ -48,14 +48,14 @@ def _function_runner(
         for idx in range(objective_count):
             if (
                 metadata.active_objectives is None
-                or metadata.active_objectives[idx, sim]
+                or metadata.active_objectives[idx, realization]
             ):
                 function = functions[idx]
                 objective_results[sim, idx] = function(variables[sim, :], context)
         for idx in range(constraint_count):
             if (
                 metadata.active_constraints is None
-                or metadata.active_constraints[idx, sim]
+                or metadata.active_constraints[idx, realization]
             ):
                 function = functions[idx + objective_count]
                 assert constraint_results is not None
