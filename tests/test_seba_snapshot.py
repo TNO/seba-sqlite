@@ -4,7 +4,6 @@ from typing import Any, Dict
 
 import pytest
 
-from seba.config import EnOptConfig
 from seba.enums import ConstraintType
 from seba.optimization import EnsembleOptimizer
 from seba_sqlite import SebaSnapshot, SqliteStorage
@@ -53,7 +52,7 @@ def test_construct_updated_optimization_progress(
 
     optimization_work_flow = EnsembleOptimizer(evaluator(test_functions))
     _storage = SqliteStorage(optimization_work_flow, output_folder)
-    optimization_work_flow.start_optimization([{"type": "set_config", "config": seba_config}, {"type": "optimizer"}])
+    optimization_work_flow.start_optimization([{"config": seba_config}])
 
     result = SebaSnapshot(output_folder).get_snapshot(filter_out_gradient=True)
 
