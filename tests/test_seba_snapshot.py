@@ -52,7 +52,9 @@ def test_construct_updated_optimization_progress(
 
     optimization_work_flow = EnsembleOptimizer(evaluator(test_functions))
     _storage = SqliteStorage(optimization_work_flow, output_folder)
-    optimization_work_flow.start_optimization([{"config": seba_config}])
+    optimization_work_flow.start_optimization(
+        plan= [{ "config": seba_config}, {"optimizer": {}}]
+    )
 
     result = SebaSnapshot(output_folder).get_snapshot(filter_out_gradient=True)
 

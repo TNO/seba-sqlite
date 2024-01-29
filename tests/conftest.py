@@ -1,13 +1,12 @@
 from dataclasses import dataclass
 from functools import partial
-from itertools import count
-from typing import Any, Callable, Iterator, List, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from seba.evaluator import Evaluator, EvaluatorMetaData
+from seba.evaluator import Evaluator, EvaluatorContext, EvaluatorResult
 from seba.utils.scaling import scale_back_variables
 
 _Function = Callable[[NDArray[np.float64], Any], float]
@@ -21,9 +20,8 @@ class FunctionContext:
 
 def _function_runner(
     variables: NDArray[np.float64],
-    metadata: EvaluatorMetaData,
+    metadata: EvaluatorContext,
     functions: List[_Function],
-    counter: Iterator[int],
 ) -> Tuple[int, NDArray[np.float64], Optional[NDArray[np.float64]]]:
     unscaled_variables = scale_back_variables(metadata.config, variables, axis=-1)
     if unscaled_variables is not None:
@@ -60,7 +58,10 @@ def _function_runner(
                 function = functions[idx + objective_count]
                 assert constraint_results is not None
                 constraint_results[sim, idx] = function(variables[sim, :], context)
-    return next(counter), objective_results, constraint_results
+    return EvaluatorResult(
+        objectives=objective_results,
+        constraints=constraint_results,
+    )
 
 
 def _compute_distance_squared(
@@ -82,6 +83,6 @@ def fixture_test_functions() -> Tuple[_Function, _Function]:
 @pytest.fixture(scope="session")
 def evaluator(test_functions: Any) -> Callable[[List[_Function]], Evaluator]:
     def _evaluator(test_functions: List[_Function] = test_functions) -> Evaluator:
-        return partial(_function_runner, functions=test_functions, counter=count())
+        return partial(_function_runner, functions=test_functions)
 
     return _evaluator

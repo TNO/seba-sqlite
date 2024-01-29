@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 from seba.enums import ConstraintType, EventType
-from seba.results import FunctionResults, GradientResults
+from seba.results import FunctionResults, GradientResults, convert_to_maximize
 from .database import Database
 from .snapshot import SebaSnapshot
 
@@ -48,7 +48,7 @@ class SqliteStorage:
 
         # Connect event handlers.
         self._set_event_handlers(optimizer)
-
+    
         self._initialized = False
 
     @property
@@ -284,10 +284,11 @@ class SqliteStorage:
     def _handle_finished_batch_event(self, event):
         logger.debug("Storing batch results in the sqlite database")
 
+        converted_results = tuple(convert_to_maximize(result) for result in event.results)
         results = []
         best_value = -np.inf
         best_results = None
-        for item in event.results:
+        for item in converted_results:
             if isinstance(item, GradientResults):
                 results.append(item)
             if (
@@ -327,7 +328,7 @@ class SqliteStorage:
             EventType.FINISHED_EVALUATION, self._handle_finished_batch_event
         )
         optimizer.add_observer(
-            EventType.FINISHED_WORKFLOW,
+            EventType.FINISHED_OPTIMIZER_STEP,
             self._handle_finished_event,
         )
 
