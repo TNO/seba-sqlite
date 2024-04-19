@@ -9,8 +9,8 @@ from pathlib import Path
 
 import numpy as np
 
-from seba.enums import ConstraintType, EventType
-from seba.results import FunctionResults, GradientResults, convert_to_maximize
+from ropt.enums import ConstraintType, EventType
+from ropt.results import FunctionResults, GradientResults, convert_to_maximize
 from .database import Database
 from .snapshot import SebaSnapshot
 
@@ -276,9 +276,9 @@ class SqliteStorage:
         )
         if config.nonlinear_constraints:
             self._add_constraint_values(config, results.batch_id, constraint_results)
-        if isinstance(results, FunctionResults):
+        if isinstance(results, FunctionResults) and results.functions is not None:
             self._add_total_objective(results.functions.weighted_objective)
-        if isinstance(results, GradientResults):
+        if isinstance(results, GradientResults) and results.gradients is not None:
             self._add_gradients(config, results.gradients.objectives)
 
     def _handle_finished_batch_event(self, event):
@@ -293,6 +293,7 @@ class SqliteStorage:
                 results.append(item)
             if (
                 isinstance(item, FunctionResults)
+                and item.functions is not None
                 and item.functions.weighted_objective > best_value
             ):
                 best_value = item.functions.weighted_objective

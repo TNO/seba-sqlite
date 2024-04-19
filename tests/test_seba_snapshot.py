@@ -4,8 +4,8 @@ from typing import Any, Dict
 
 import pytest
 
-from seba.enums import ConstraintType
-from seba.optimization import EnsembleOptimizer
+from ropt.enums import ConstraintType
+from ropt.optimization import EnsembleOptimizer
 from seba_sqlite import SebaSnapshot, SqliteStorage
 
 _SEBA_CONFIG: Dict[str, Any] = {

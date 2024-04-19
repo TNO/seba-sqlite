@@ -6,8 +6,8 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from seba.evaluator import Evaluator, EvaluatorContext, EvaluatorResult
-from seba.utils.scaling import scale_back_variables
+from ropt.evaluator import Evaluator, EvaluatorContext, EvaluatorResult
+from ropt.utils.scaling import scale_back_variables
 
 _Function = Callable[[NDArray[np.float64], Any], float]
 
